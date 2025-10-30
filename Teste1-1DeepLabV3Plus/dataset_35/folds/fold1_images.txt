@@ -1,0 +1,7 @@
+image_008.tif
+image_011.tif
+image_015.tif
+image_019.tif
+image_029.tif
+image_030.tif
+image_035.tif
