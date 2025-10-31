@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH --account=psivgmp
+#SBATCH --partition=sequana_gpu
+#SBATCH --job-name=gen1
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --time=48:00:00
+#SBATCH --output=/scratch/psivgmp/lucas.silva8/projects/gen1-deep/logs/%x_%j.out
+#SBATCH --error=/scratch/psivgmp/lucas.silva8/projects/gen1-deep/logs/%x_%j.err
+
+module load anaconda3/2024.02_sequana
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "$SCRATCH/conda-gen1deep"
+
+mkdir -p /scratch/psivgmp/lucas.silva8/projects/gen1-deep/logs
+cd /scratch/psivgmp/lucas.silva8/projects/gen1-deep/src
+
+# se seu main já usa caminhos relativos (dataset_35 dentro do repo):
+python -u main.py
+
+# se precisar apontar dataset/saida, troque a linha acima por:
+# python -u main.py --data ../dataset_35 --out ../output
