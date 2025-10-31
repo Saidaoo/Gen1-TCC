@@ -7,7 +7,7 @@ Experimento científico comparando arquiteturas de segmentação semântica com 
 ## 🎯 Objetivo
 Comparar performance entre UNet e DeepLabV3+ mantendo TODOS os hiperparâmetros idênticos, isolando apenas a diferença arquitetural.
 
-## 📊 Dataset
+##  Dataset
 - **Classes**: 8 classes de uso do solo
 - **Tamanho**: 224x224 pixels
 - **Split**: 5-fold cross validation

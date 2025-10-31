@@ -230,8 +230,7 @@ def update_models_comparison(params, trainer, training_time_hours, test_time_hou
         )
         f.write(f"{total_params:<12,} {training_time_hours:.2f}\n")
 
-    print(f"📊 Métricas adicionadas ao arquivo de comparação: {comparison_file}")
-
+    print(f" Métricas adicionadas ao arquivo de comparação: {comparison_file}")
 
 def save_final_metrics(params, trainer, training_time_hours, test_time_hours):
     """Salva as métricas finais em um arquivo TXT específico do modelo"""
@@ -295,14 +294,14 @@ def save_final_metrics(params, trainer, training_time_hours, test_time_hours):
 
         f.write("\n" + "=" * 80 + "\n")
 
-    print(f"📊 Métricas finais salvas em: {metrics_file}")
+    print(f" Métricas finais salvas em: {metrics_file}")
 
 
 if __name__ == "__main__":
-
     # Registra o tempo de início do treinamento
     start_time = time.time()
 
+    # PATHS CORRIGIDOS - Compatível com Linux
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     DATASET_DIR = os.path.join(BASE_DIR, "dataset_35")
     OUTPUT_DIR = os.path.join(BASE_DIR, "output")
@@ -325,7 +324,7 @@ if __name__ == "__main__":
             "Solo Exposto",
             "Água",
         ],  # Nome das classes
-        "maximum_epochs": 999,  # Número de épocas de treinaento
+        "maximum_epochs": 999,  # Número de épocas de treinamento
         "save_epoch": 2,  # Salvar o modelo a cada n épocas para evitar perder o treinamento caso ocorra algum erro ou queda de energia
         "print_each": 100,  # Print each n iterations (apenas para acompanhar visualmente o treinamento)
         "augment": False,
@@ -360,98 +359,116 @@ if __name__ == "__main__":
         "model": {
             "name": ModelChooser.DEEPLABV3PLUS,  # Escolha entre 'SEGNET_MODIFICADA' ou 'UNET' ou 'SEGFORMER' DEEPLABV3PLUS
         },
-        "results_folder": "../output",  # Pasta onde serão salvos os resultados
     }
 
     print("=" * 80)
     print("CONFIGURAÇÃO DO EXPERIMENTO - HIPERPARÂMETROS 1:1")
     print("=" * 80)
-    print(f"📊 Modelo: {params['model']['name']}")
-    print(f"📐 Input Size: {params['window_size']}")
-    print(f"🎯 Número de Classes: {params['n_classes']}")
-    print(f"📦 Batch Size: {params['bs']}")
-    print(f"🔄 Máximo de Épocas: {params['maximum_epochs']}")
-    print(f"📈 Otimizador: {params['optimizer_params']['optimizer']}")
-    print(f"🎓 Learning Rate: {params['optimizer_params']['lr']}")
-    print(f"⚖️  Weight Decay: {params['optimizer_params']['weight_decay']}")
-    print(f"📉 Loss Function: {params['loss']['name']}")
-    print(f"🎯 Loss Params: {params['loss']['params']}")
-    print(f"🔄 Scheduler: {params['lrs_params']['type']}")
-    print(f"⏳ Patience: {params['patience']}")
-    print(f"🔄 Augment: {params['augment']}")
+    print(f"Modelo: {params['model']['name']}")
+    print(f"Input Size: {params['window_size']}")
+    print(f"Número de Classes: {params['n_classes']}")
+    print(f"Batch Size: {params['bs']}")
+    print(f"Máximo de Épocas: {params['maximum_epochs']}")
+    print(f"Otimizador: {params['optimizer_params']['optimizer']}")
+    print(f"Learning Rate: {params['optimizer_params']['lr']}")
+    print(f"Weight Decay: {params['optimizer_params']['weight_decay']}")
+    print(f"Loss Function: {params['loss']['name']}")
+    print(f"Loss Params: {params['loss']['params']}")
+    print(f"Scheduler: {params['lrs_params']['type']}")
+    print(f"Patience: {params['patience']}")
+    print(f"Augment: {params['augment']}")
     print("=" * 80)
 
-    params["results_folder"] = (
-        f"E:/Documents/Teste1-1 DeepLabV3+/output/K1x5noAug_{params['model']['name']}b45drop2_imgnet_{params['optimizer_params']['optimizer']}{params['optimizer_params']['weight_decay']}WD_{params['loss']['name']}1.0-0.5_noWeight"
-    )
+    # CORRIGIDO: Usar caminhos relativos ao BASE_DIR
+    model_name = params["model"]["name"]
+    optimizer_name = params["optimizer_params"]["optimizer"]
+    weight_decay = params["optimizer_params"]["weight_decay"]
+    loss_name = params["loss"]["name"]
 
-    print(f"📁 Resultados serão salvos em:")
+    results_folder_name = f"K1x5noAug_{model_name}b45drop2_imgnet_{optimizer_name}{weight_decay}WD_{loss_name}1.0-0.5_noWeight"
+    params["results_folder"] = os.path.join(OUTPUT_DIR, results_folder_name)
+
+    # Criar diretório de resultados se não existir
+    os.makedirs(params["results_folder"], exist_ok=True)
+
+    print(f"Resultados serão salvos em:")
     print(f"   {os.path.abspath(params['results_folder'])}")
     print("=" * 80)
 
-    image_dir = os.path.join(params['root_dir'], 'images')
-    label_dir = os.path.join(params['root_dir'], 'labels')
+    # CORRIGIDO: Usar caminhos relativos
+    image_dir = os.path.join(params["root_dir"], "images")
+    label_dir = os.path.join(params["root_dir"], "labels")
     edges_dir = os.path.join(params["root_dir"], "edges")
 
-    # Load image and label files from .txt
+    # CORRIGIDO: Load image and label files from .txt usando caminhos relativos
+    # TRAIN FOLDS (1, 2, 3)
     train_images1 = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold1_images.txt",
+        os.path.join(DATASET_DIR, "folds", "fold1_images.txt"),
         header=None,
     ).values
     train_images2 = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold2_images.txt",
+        os.path.join(DATASET_DIR, "folds", "fold2_images.txt"),
         header=None,
     ).values
     train_images3 = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold3_images.txt",
+        os.path.join(DATASET_DIR, "folds", "fold3_images.txt"),
         header=None,
     ).values
     train_images = [
         os.path.join(image_dir, f[0])
         for f in np.concatenate([train_images1, train_images2, train_images3])
     ]
+
     train_labels1 = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold1_labels.txt",
+        os.path.join(DATASET_DIR, "folds", "fold1_labels.txt"),
         header=None,
     ).values
     train_labels2 = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold2_labels.txt",
+        os.path.join(DATASET_DIR, "folds", "fold2_labels.txt"),
         header=None,
     ).values
     train_labels3 = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold3_labels.txt",
+        os.path.join(DATASET_DIR, "folds", "fold3_labels.txt"),
         header=None,
     ).values
     train_labels = [
         os.path.join(label_dir, f[0])
         for f in np.concatenate([train_labels1, train_labels2, train_labels3])
     ]
-    # train_edges = pd.read_table('train_labels.txt',header=None).values
-    # train_edges = [os.path.join(edges_dir, f[0]) for f in train_edges]
 
+    # VALIDATION FOLD (4)
     val_images = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold4_images.txt",
+        os.path.join(DATASET_DIR, "folds", "fold4_images.txt"),
         header=None,
     ).values
     val_images = [os.path.join(image_dir, f[0]) for f in val_images]
+
     val_labels = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold4_labels.txt",
+        os.path.join(DATASET_DIR, "folds", "fold4_labels.txt"),
         header=None,
     ).values
     val_labels = [os.path.join(label_dir, f[0]) for f in val_labels]
 
+    # TEST FOLD (5)
     test_images = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold5_images.txt",
+        os.path.join(DATASET_DIR, "folds", "fold5_images.txt"),
         header=None,
     ).values
     test_images = [os.path.join(image_dir, f[0]) for f in test_images]
+
     test_labels = pd.read_table(
-        r"E:\Documents\Teste1-1 DeepLabV3+\dataset_35\folds/fold5_labels.txt",
+        os.path.join(DATASET_DIR, "folds", "fold5_labels.txt"),
         header=None,
     ).values
     test_labels = [os.path.join(label_dir, f[0]) for f in test_labels]
 
-    # Carregar os pesos de cada classe, calculados pelo arquivo `extra\weights_calcupator.py`
+    print(f"Dataset carregado:")
+    print(f"   Train: {len(train_images)} imagens")
+    print(f"   Val: {len(val_images)} imagens")
+    print(f"   Test: {len(test_images)} imagens")
+    print("=" * 80)
+
+    # Carregar os pesos de cada classe, calculados pelo arquivo `extra\weights_calculator.py`
     weights_calculator_loss(params, train_labels)
 
     # Create train and test sets
@@ -478,20 +495,32 @@ if __name__ == "__main__":
         augmentation=False,
     )
 
-    # # Load dataset classes in pytorch dataloader handler object
+    # Load dataset classes in pytorch dataloader handler object
     train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=params["bs"], shuffle=True
+        train_dataset,
+        batch_size=params["bs"],
+        shuffle=True,
+        num_workers=4,
+        pin_memory=True,
     )
     val_loader = torch.utils.data.DataLoader(
-        val_dataset, batch_size=params["bs"], shuffle=True
+        val_dataset,
+        batch_size=params["bs"],
+        shuffle=True,
+        num_workers=4,
+        pin_memory=True,
     )
     test_loader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=params["bs"], shuffle=False
+        test_dataset,
+        batch_size=params["bs"],
+        shuffle=False,
+        num_workers=4,
+        pin_memory=True,
     )
 
     model = build_model(model_name=params["model"]["name"], params=params)
 
-    print("🏗️  CONFIGURAÇÃO DA ARQUITETURA:")
+    print("CONFIGURAÇÃO DA ARQUITETURA:")
     print(f"   Model: {params['model']['name']}")
     print(f"   Encoder: EfficientNet-B4 (ImageNet)")
     print(f"   Device: {params['device']}")
@@ -508,17 +537,19 @@ if __name__ == "__main__":
         "val": val_loader,
     }
 
-    # cbkp=f"{params['results_folder']}/best_epoch.pth.tar" #None {params['results_folder']}
-    # 20250509_t1_unet_augTrue/focal_loss_calculate_ADAM_multi/
-    cbkp = f"../output/K1x10augRot90_unetb05noDrop_imgnet_ADAM0WD_focal_loss/best_epoch7573.pth.tar"  # None {params['results_folder']}
-    trainer = Trainer(model, loader, params, cbkp=None)
-    # print(trainer.test(stride = 32, all = False))
-    # _, all_preds, all_gts = trainer.test(all=True, stride=32)
-    # clear()
+    # CORRIGIDO: Checkpoint path (comentado, iniciando do zero)
+    # Se quiser carregar um checkpoint anterior, descomente e ajuste o path:
+    # cbkp = os.path.join(OUTPUT_DIR, "K1x10augRot90_unetb05noDrop_imgnet_ADAM0WD_focal_loss", "best_epoch7573.pth.tar")
+    cbkp = None
+
+    trainer = Trainer(model, loader, params, cbkp=cbkp)
 
     patCB = Callback(patience=params["patience"], min_value=60)
 
     # Start the training.
+    print("INICIANDO TREINAMENTO...")
+    print("=" * 80)
+
     for epoch in range(trainer.last_epoch + 1, params["maximum_epochs"]):
         acc_train, f1score_train, mcc_train, iou_train = trainer.train()
         acc_val, f1score_val, mcc_val, iou_val = trainer.validate(stride=64)
@@ -535,24 +566,13 @@ if __name__ == "__main__":
         trainer.plot_metrics(params["results_folder"])
 
         if trainer.scheduler is not None:
-            trainer.scheduler.step(iou_val)  # f1score_val
+            trainer.scheduler.step(iou_val)
 
-        # if is_save_epoch(epoch, ignore_epoch=params['maximum_epochs']):
         if patCB.patience_iou_val(iou_val):
-
-            # acc = trainer.test(stride = min(params['window_size']), all=False)
-            # trainer.save('./segnet256_epoch_{}.pth.tar'.format(epoch))
             trainer.save(os.path.join(params["results_folder"], "best_epoch.pth.tar"))
 
-            # trainer.save(os.path.join(params['results_folder'], '{}_{}.pth.tar'.format(params['model']['name'], params['maximum_epochs'])))
-
         if patCB.COUNTER == patCB.PATIENCE:
-            # trainer.save(os.path.join(params['results_folder'], 'last_epoch.pth.tar'))
-
-            print(
-                f"PATIENCE :::  Training Terminated | Best Epoch = {epoch-10} "
-            )  # | Loss = {trainer.epoch_loss[epoch-11]} | Acc = {trainer.epoch_acc[epoch-11]}
-            # trainer = patCB.BEST_TRAINER
+            print(f"PATIENCE :: Training Terminated | Best Epoch = {epoch-10}")
             break
 
     np.savez(
@@ -570,8 +590,12 @@ if __name__ == "__main__":
     # Calcula o tempo gasto em horas
     training_time = end_time - start_time
     training_time_hours = training_time / 3600.0
-    print("Tempo gasto treinando: {:.2f} horas".format(training_time_hours))
+    print("=" * 80)
+    print(f"Tempo gasto treinando: {training_time_hours:.2f} horas")
+    print("=" * 80)
 
+    # Carregar melhor modelo para teste final
+    print("INICIANDO TESTE FINAL COM MELHOR MODELO...")
     trainer = Trainer(
         model,
         loader,
@@ -579,31 +603,8 @@ if __name__ == "__main__":
         cbkp=os.path.join(params["results_folder"], "best_epoch.pth.tar"),
     )
 
-    # acc, all_preds, all_gts = trainer.test(all=True, stride=min(params['window_size']))
-    all_preds = trainer.test(
-        stride=64, all=True
-    )  # acc,  , all_gts, _mc_dropout, mc_runs=25
-    # print(f'Global Accuracy: {acc}')
-    training_time = time.time() - end_time
-    training_time_hours = training_time / 3600.0
-    print(
-        "Tempo gasto em inferências MCDropout: {:.2f} horas".format(training_time_hours)
-    )
+    all_preds = trainer.test(stride=64, all=True)
 
-    input_ids, label_ids, _ = test_loader.dataset.get_dataset()
-    all_ids = [os.path.split(f)[1].split(".")[0] for f in input_ids]
-
-    save_final_metrics(params, trainer, training_time_hours, training_time_hours)
-    update_models_comparison(params, trainer, training_time_hours, training_time_hours)
-
-    os.makedirs(os.path.join(params["results_folder"], "inference"), exist_ok=True)
-    for p, id_ in zip(all_preds, all_ids):
-        img = convert_to_color(p)
-        io.imsave(
-            os.path.join(
-                params["results_folder"],
-                "inference",
-                "inference_tile_{}.png".format(id_),
-            ),
-            img,
-        )
+    print("=" * 80)
+    print("TREINAMENTO CONCLUÍDO!")
+    print("=" * 80)
