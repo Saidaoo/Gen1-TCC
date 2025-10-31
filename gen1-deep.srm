@@ -5,7 +5,7 @@
 #SBATCH --ntasks=1               #Numero total de tarefas MPI
 #SBATCH -p sequana_gpu_dev    #Fila (partition) a ser utilizada
 #SBATCH -J gen1-deep               #Nome job
-#SBATCH --time=48:00:00          #Obrigatório
+#SBATCH --time=08:00:00          #Obrigatório
 
 module load anaconda3/2024.02_sequana
 source "$(conda info --base)/etc/profile.d/conda.sh"
