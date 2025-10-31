@@ -18,6 +18,3 @@ cd /scratch/psivgmp/lucas.silva8/projects/gen1-deep/src
 
 # se seu main já usa caminhos relativos (dataset_35 dentro do repo):
 python -u main.py
-
-# se precisar apontar dataset/saida, troque a linha acima por:
-# python -u main.py --data ../dataset_35 --out ../output
