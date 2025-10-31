@@ -1,13 +1,11 @@
 #!/bin/bash
 #SBATCH --account=psivgmp
-#SBATCH --partition=sequana_gpu
-#SBATCH --job-name=gen1
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
-#SBATCH --time=48:00:00
-#SBATCH --output=/scratch/psivgmp/lucas.silva8/projects/gen1-deep/logs/%x_%j.out
-#SBATCH --error=/scratch/psivgmp/lucas.silva8/projects/gen1-deep/logs/%x_%j.err
+#SBATCH --nodes=1                #Número de Nós
+#SBATCH --ntasks-per-node=1      #Número de tarefas por Nó
+#SBATCH --ntasks=1               #Numero total de tarefas MPI
+#SBATCH -p sequana_gpu    #Fila (partition) a ser utilizada
+#SBATCH -J gen1-deep               #Nome job
+#SBATCH --time=48:00:00          #Obrigatório
 
 module load anaconda3/2024.02_sequana
 source "$(conda info --base)/etc/profile.d/conda.sh"
