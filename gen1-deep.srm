@@ -3,7 +3,7 @@
 #SBATCH --nodes=1                #Número de Nós
 #SBATCH --ntasks-per-node=1      #Número de tarefas por Nó
 #SBATCH --ntasks=1               #Numero total de tarefas MPI
-#SBATCH -p sequana_gpu    #Fila (partition) a ser utilizada
+#SBATCH -p sequana_gpu_dev    #Fila (partition) a ser utilizada
 #SBATCH -J gen1-deep               #Nome job
 #SBATCH --time=48:00:00          #Obrigatório
 
